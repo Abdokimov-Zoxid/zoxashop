@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zoxa Shop — Yandex Pro Xizmatlari</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Unbounded:wght@300;400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #080808;
+    --yellow: #FFD700;
+    --yellow-dim: #e6b800;
+    --white: #f5f5f0;
+    --gray: #161616;
+    --gray2: #222;
+    --text-muted: #888;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  /* ANIMATED BG */
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+  #bg-canvas {
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    z-index:0;
+    pointer-events:none;
+  }
+  .page-wrap { position:relative; z-index:1; }
+
+  /* LANG */
+  .lang-bar {
+    position:fixed; top:16px; right:20px; z-index:200;
+    display:flex; gap:6px;
+  }
+  .lang-btn {
+    background:rgba(20,20,20,0.85);
+    border:1px solid #333;
+    color:var(--text-muted);
+    font-family:'Unbounded',sans-serif;
+    font-size:11px; padding:6px 12px;
+    cursor:pointer; border-radius:20px;
+    backdrop-filter:blur(6px);
+    transition:all .2s;
+  }
+  .lang-btn.active { background:var(--yellow); color:var(--black); border-color:var(--yellow); }
+
+  /* MOBILE MENU */
+  .mobile-menu-btn {
+    display:none; position:fixed; top:20px; left:20px; z-index:210;
+    background:rgba(20,20,20,0.9); border:1px solid #333;
+    color:var(--white); font-size:24px; cursor:pointer;
+    width:44px; height:44px; padding:0;
+    border-radius:6px; backdrop-filter:blur(6px);
+  }
+  .mobile-menu { display:none; }
+  @media(max-width:480px){ 
+    .mobile-menu-btn { display:flex; align-items:center; justify-content:center; }
+    .mobile-menu.open { 
+      display:block; position:fixed; top:70px; left:20px; right:20px; z-index:209;
+      background:rgba(10,10,10,.95); border:1px solid #2a2a2a; border-radius:8px;
+      padding:16px; backdrop-filter:blur(8px);
+    }
+    .mobile-menu a { display:block; padding:12px 0; color:var(--text-muted); text-decoration:none; border-bottom:1px solid #1a1a1a; }
+    .mobile-menu a:hover { color:var(--yellow); }
+  }
+
+  /* HERO */
+  .hero {
+    min-height:100vh;
+    display:flex; flex-direction:column; justify-content:center;
+    padding:80px 40px 60px;
+    position:relative; overflow:hidden;
+  }
+  .hero-tag {
+    font-family:'Unbounded',sans-serif; font-size:11px; font-weight:300;
+    color:var(--yellow); letter-spacing:4px; text-transform:uppercase;
+    margin-bottom:24px;
+    opacity:0; animation:fadeUp .6s ease .1s forwards;
+  }
+  .hero-title {
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(60px,13vw,150px);
+    line-height:.88; letter-spacing:-2px; margin-bottom:20px;
+    opacity:0; animation:fadeUp .6s ease .25s forwards;
+  }
+  .hero-title .yl { color:var(--yellow); }
+  .hero-subtitle {
+    font-family:'Unbounded',sans-serif;
+    font-size:clamp(13px,2vw,18px); font-weight:300;
+    color:var(--text-muted); max-width:560px; line-height:1.7;
+    margin-bottom:48px;
+    opacity:0; animation:fadeUp .6s ease .4s forwards;
+  }
+  .hero-cta {
+    display:flex; gap:16px; flex-wrap:wrap;
+    opacity:0; animation:fadeUp .6s ease .55s forwards;
+  }
+  .btn-primary {
+    background:var(--yellow); color:var(--black);
+    font-family:'Unbounded',sans-serif; font-size:13px; font-weight:700;
+    padding:16px 36px; border:none; cursor:pointer;
+    text-decoration:none; display:inline-block;
+    clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));
+    transition:all .2s;
+  }
+  .btn-primary:hover { background:var(--yellow-dim); transform:translateY(-2px); }
+  .btn-outline {
+    background:transparent; color:var(--white);
+    font-family:'Unbounded',sans-serif; font-size:13px; font-weight:300;
+    padding:16px 36px; border:1px solid #444;
+    cursor:pointer; text-decoration:none; display:inline-block;
+    transition:all .2s;
+  }
+  .btn-outline:hover { border-color:var(--yellow); color:var(--yellow); }
+  .scroll-line {
+    position:absolute; bottom:40px; left:40px;
+    display:flex; align-items:center; gap:12px;
+    font-family:'Unbounded',sans-serif; font-size:10px;
+    color:var(--text-muted); letter-spacing:3px;
+    opacity:0; animation:fadeUp .6s ease .8s forwards;
+  }
+  .scroll-line::before { content:''; width:40px; height:1px; background:var(--text-muted); }
+
+  /* SECTION */
+  .section { padding:80px 40px; }
+  .section-label {
+    font-family:'Unbounded',sans-serif; font-size:10px; font-weight:300;
+    color:var(--yellow); letter-spacing:5px; text-transform:uppercase;
+    margin-bottom:50px; display:flex; align-items:center; gap:16px;
+  }
+  .section-label::after {
+    content:''; flex:1; height:1px;
+    background:linear-gradient(to right,#333,transparent); max-width:200px;
+  }
+  .divider { height:1px; background:linear-gradient(to right,transparent,#2a2a2a,transparent); margin:0 40px; }
+
+  /* SERVICE CATEGORY */
+  .cat-block { margin-bottom:56px; }
+  .cat-title {
+    font-family:'Unbounded',sans-serif; font-size:13px; font-weight:700;
+    color:var(--white); margin-bottom:20px;
+    display:flex; align-items:center; gap:12px;
+  }
+  .cat-title::after { content:''; flex:1; height:1px; background:#2a2a2a; }
+  .cat-icon { font-size:20px; }
+
+  .sub-label {
+    font-family:'Unbounded',sans-serif; font-size:10px;
+    color:#444; letter-spacing:3px; text-transform:uppercase;
+    padding:18px 0 10px; display:block;
+  }
+
+  /* PRICE CARDS */
+  .price-list { display:flex; flex-direction:column; gap:6px; }
+
+  .price-row {
+    position:relative; overflow:hidden;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 20px;
+    height:62px;
+    background:#101010;
+    border:1px solid #1c1c1c;
+    cursor:default;
+    opacity:0; transform:translateX(-30px);
+    transition: border-color .25s, background .25s, box-shadow .25s, transform .25s;
+  }
+  .price-row.visible {
+    opacity:1; transform:translateX(0);
+  }
+  .price-row:hover {
+    border-color: rgba(255,215,0,.5);
+    background:#141400;
+    box-shadow: 0 0 24px rgba(255,215,0,.06), inset 0 0 0 1px rgba(255,215,0,.08);
+  }
+
+  /* sliding yellow fill on hover */
+  .price-row::before {
+    content:'';
+    position:absolute; top:0; left:-100%; width:100%; height:100%;
+    background: linear-gradient(90deg, transparent, rgba(255,215,0,.05), transparent);
+    transition: left .5s ease;
+  }
+  .price-row:hover::before { left:100%; }
+
+  /* left accent bar */
+  .price-row::after {
+    content:'';
+    position:absolute; top:0; left:0;
+    width:3px; height:0%;
+    background:var(--yellow);
+    transition: height .3s ease;
+  }
+  .price-row:hover::after { height:100%; }
+
+  .price-row-name {
+    font-family:'Unbounded',sans-serif; font-size:12px; font-weight:300;
+    color:#bbb; transition:color .25s; z-index:1;
+    flex:1;
+  }
+  .price-row:hover .price-row-name { color:var(--white); }
+
+  /* progress bar behind */
+  .price-bar-wrap {
+    position:absolute; bottom:0; left:0; right:0; height:2px;
+    background:#1a1a1a; overflow:hidden;
+  }
+  .price-bar {
+    height:100%;
+    background:linear-gradient(90deg, #c8a200, var(--yellow));
+    width:0%; transition: width 1s cubic-bezier(.4,0,.2,1);
+  }
+  .price-row.visible .price-bar { width:var(--bar-w,40%); }
+
+  .price-row-right {
+    display:flex; align-items:baseline; gap:5px; z-index:1; flex-shrink:0;
+  }
+  .price-num {
+    font-family:'Bebas Neue',sans-serif; font-size:clamp(24px,4vw,48px); letter-spacing:.5px;
+    color:#888; transition:color .25s, transform .25s;
+    line-height:1;
+  }
+  .price-row:hover .price-num { color:var(--yellow); transform:scale(1.12); }
+  .price-unit {
+    font-family:'Inter',sans-serif; font-size:clamp(10px,1.2vw,14px); color:#555;
+    transition:color .25s;
+  }
+  .price-row:hover .price-unit { color:#aaa; }
+
+  @media(min-width:1024px) {
+    .price-num { font-size:52px; }
+    .price-unit { font-size:15px; }
+    .price-row { height:72px; padding:0 24px; }
+    .price-row-name { font-size:13px; }
+  }
+
+  /* order btn that appears on hover */
+  .price-order-btn {
+    position:absolute; right:16px; top:50%; transform:translateY(-50%) translateX(8px);
+    background:var(--yellow); color:var(--black);
+    font-family:'Unbounded',sans-serif; font-size:9px; font-weight:700;
+    padding:5px 10px; letter-spacing:1px;
+    opacity:0; transition: opacity .2s, transform .2s;
+    clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));
+    white-space:nowrap; text-decoration:none;
+    z-index:2;
+  }
+  .price-row:hover .price-order-btn { opacity:1; transform:translateY(-50%) translateX(0); }
+  .price-row:hover .price-num { margin-right:80px; }
+
+  /* STEPS */
+  .steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:40px; }
+  .step { position:relative; padding-top:24px; }
+  .step-num {
+    font-family:'Bebas Neue',sans-serif; font-size:80px; color:#181818;
+    line-height:1; position:absolute; top:0; left:-8px;
+  }
+  .step-content { position:relative; z-index:1; padding-top:40px; }
+  .step-title { font-family:'Unbounded',sans-serif; font-size:13px; font-weight:700; margin-bottom:8px; }
+  .step-desc { font-size:13px; color:var(--text-muted); line-height:1.7; }
+
+  /* FORM */
+  .form-section {
+    background:rgba(18,18,18,.95);
+    backdrop-filter:blur(8px);
+    margin:0 40px; padding:60px;
+    clip-path:polygon(0 0,calc(100% - 40px) 0,100% 40px,100% 100%,40px 100%,0 calc(100% - 40px));
+    border:1px solid #222;
+  }
+  .form-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(36px,6vw,72px); line-height:1; margin-bottom:8px; }
+  .form-title span { color:var(--yellow); }
+  .form-subtitle { font-size:13px; color:var(--text-muted); margin-bottom:40px; font-family:'Unbounded',sans-serif; font-weight:300; }
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+  @media(max-width:600px){ .form-grid { grid-template-columns:1fr; } }
+  .field { display:flex; flex-direction:column; gap:8px; }
+  .field label { font-family:'Unbounded',sans-serif; font-size:10px; font-weight:300; color:var(--text-muted); letter-spacing:2px; text-transform:uppercase; }
+  .field input, .field select, .field textarea {
+    background:#0d0d0d; border:1px solid #2a2a2a; color:var(--white);
+    font-family:'Inter',sans-serif; font-size:14px; padding:14px 16px;
+    outline:none; transition:border-color .2s; -webkit-appearance:none; appearance:none;
+  }
+  .field select option { background:#111; }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color:var(--yellow); }
+  .field textarea { resize:vertical; min-height:90px; }
+  .field-full { grid-column:1/-1; }
+  .form-submit { margin-top:24px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+  .form-note { font-size:12px; color:var(--text-muted); }
+  .success-msg {
+    display:none; background:rgba(255,215,0,.08); border:1px solid var(--yellow);
+    color:var(--yellow); font-family:'Unbounded',sans-serif; font-size:13px;
+    padding:16px 24px; margin-top:20px;
+  }
+  /* telegram config note */
+  .tg-config {
+    background:#0d1117; border:1px solid #2a2a2a;
+    padding:16px 20px; margin-bottom:24px; font-size:12px;
+    color:#666; font-family:'Inter',sans-serif; line-height:1.7;
+    display:none;
+  }
+  .tg-config b { color:var(--yellow); }
+
+  /* FOOTER */
+  footer {
+    padding:60px 40px 40px;
+    display:flex; justify-content:space-between; align-items:flex-end;
+    flex-wrap:wrap; gap:24px; border-top:1px solid #181818;
+  }
+  .footer-brand { font-family:'Bebas Neue',sans-serif; font-size:32px; color:var(--yellow); }
+  .footer-links { display:flex; gap:24px; flex-wrap:wrap; }
+  .footer-links a { color:var(--text-muted); text-decoration:none; font-size:12px; font-family:'Unbounded',sans-serif; font-weight:300; transition:color .2s; }
+  .footer-links a:hover { color:var(--yellow); }
+  .footer-copy { font-size:11px; color:#333; font-family:'Unbounded',sans-serif; font-weight:300; width:100%; }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+  /* SHOWCASE SECTION */
+  .showcase { padding:80px 40px; }
+  .showcase-grid {
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:24px; margin-top:40px;
+  }
+  .showcase-card {
+    background:rgba(20,20,20,.6); border:1px solid #2a2a2a;
+    border-radius:8px; overflow:hidden;
+    transition: transform .3s, border-color .3s, box-shadow .3s;
+    cursor:pointer;
+  }
+  .showcase-card:hover {
+    transform:translateY(-8px);
+    border-color:rgba(255,215,0,.3);
+    box-shadow: 0 12px 40px rgba(255,215,0,.1);
+  }
+  .showcase-img {
+    width:100%; height:200px; background:linear-gradient(135deg,#1a1a1a,#2a1a00);
+    display:flex; align-items:center; justify-content:center;
+    font-size:60px; color:rgba(255,215,0,.3);
+  }
+  .showcase-content { padding:24px; }
+  .showcase-title { font-family:'Unbounded',sans-serif; font-size:14px; font-weight:700; margin-bottom:8px; }
+  .showcase-desc { font-size:12px; color:var(--text-muted); line-height:1.6; }
+
+  /* STATS */
+  .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:20px; margin-top:40px; }
+  .stat-item { text-align:center; padding:20px; background:#101010; border:1px solid #1c1c1c; border-radius:4px; }
+  .stat-num { font-family:'Bebas Neue',sans-serif; font-size:36px; color:var(--yellow); }
+  .stat-label { font-size:11px; color:var(--text-muted); margin-top:8px; }
+
+  @media(max-width:1200px){
+    .showcase-grid { grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px; }
+  }
+
+  @media(max-width:768px){
+    .hero,.section,.showcase{padding-left:20px;padding-right:20px;}
+    .hero-tag { font-size:9px; }
+    .hero-title { font-size:clamp(42px,10vw,80px); }
+    .form-section{margin:0 20px;padding:24px 20px;}
+    footer{padding:40px 20px; flex-direction:column; align-items:flex-start; }
+    .divider{margin:0 20px;}
+    .showcase-grid { grid-template-columns:1fr; gap:16px; }
+    .scroll-line { bottom:20px; left:20px; font-size:9px; }
+    .stats-grid { grid-template-columns:repeat(2,1fr); gap:12px; }
+  }
+
+  @media(max-width:480px){
+    .hero { padding:60px 16px 40px; }
+    .hero-title { font-size:clamp(32px,8vw,60px); letter-spacing:-1px; }
+    .hero-subtitle { font-size:clamp(12px,1.8vw,14px); }
+    .hero-cta { flex-direction:column; }
+    .btn-primary, .btn-outline { width:100%; text-align:center; }
+    .section { padding:60px 16px; }
+    .showcase { padding:60px 16px; }
+    .steps { grid-template-columns:1fr; gap:24px; }
+    .form-grid { grid-template-columns:1fr; }
+    .form-section { padding:20px 16px; margin:0 16px; }
+    .footer-links { flex-direction:column; gap:12px; }
+    .price-row { height:56px; padding:0 16px; }
+    .section-label { font-size:9px; margin-bottom:32px; }
+  }
+  [data-ru]{display:none;}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+<div class="page-wrap">
+
+<!-- LANG -->
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('uz')">UZ</button>
+  <button class="lang-btn" onclick="setLang('ru')">RU</button>
+</div>
+
+<!-- MOBILE MENU BTN -->
+<button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#services" onclick="closeMobileMenu()"><span data-uz>Narxlar</span><span data-ru>Цены</span></a>
+  <a href="#order" onclick="closeMobileMenu()"><span data-uz>Buyurtma</span><span data-ru>Заказ</span></a>
+  <a href="https://t.me/zachemuya" target="_blank">Telegram</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">
+    <span data-uz>Yandex Pro Rasmiy Hamkori</span>
+    <span data-ru>Официальный партнёр Яндекс Про</span>
+  </div>
+  <h1 class="hero-title">
+    ZOXA<br><span class="yl">SHOP</span>
+  </h1>
+  <p class="hero-subtitle">
+    <span data-uz>Yandex Pro haydovchilari uchun barcha kerakli xizmatlar biz joyda</span>
+    <span data-ru>Все необходимые услуги для водителей Яндекс Про — у нас</span>
+  </p>
+  <div class="hero-cta">
+    <a href="#order" class="btn-primary">
+      <span data-uz>Buyurtma Berish</span>
+      <span data-ru>Заказать</span>
+    </a>
+    <a href="#services" class="btn-outline">
+      <span data-uz>Narxlar</span>
+      <span data-ru>Цены</span>
+    </a>
+  </div>
+  <div class="scroll-line">
+    <span data-uz>PASTGA AYLANING</span>
+    <span data-ru>ПРОКРУТИТЕ</span>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="section" id="services">
+  <div class="section-label">
+    <span data-uz>Xizmatlar & Narxlar</span>
+    <span data-ru>Услуги & Цены</span>
+  </div>
+
+  <!-- BLOCK OCHISH -->
+  <div class="cat-block">
+    <div class="cat-title"><span class="cat-icon">🔓</span>
+      <span data-uz>Blok Ochish</span><span data-ru>Разблокировка</span>
+    </div>
+    <span class="sub-label"><span data-uz>4.80 Baland reyting</span><span data-ru>Рейтинг 4.80 высокий</span></span>
+    <div class="price-list">
+      <div class="price-row" style="--bar-w:33%">
+        <span class="price-row-name">Komfort</span>
+        <div class="price-row-right"><span class="price-num">100 000</span><span class="price-unit">so'm</span></div>
+        <a href="#order" class="price-order-btn">BUYURTMA</a>
+        <div class="price-bar-wrap"><div class="price-bar"></div></div>
+      </div>
+      <div class="price-row" style="--bar-w:50%">
+        <span class="price-row-name">Komfort+</span>
+        <div class="price-row-right"><span class="price-num">150 000</span><span class="price-unit">so'm</span></div>
+        <a href="#order" class="price-order-btn">BUYURTMA</a>
+        <div class="price-bar-wrap"><div class="price-bar"></div></div>
+      </div>
+      <div class="price-row" style="--bar-w:50%">
+        <span class="price-row-name">Electro</span>
+        <div class="price-row-right"><span class="price-num">150 000</span><span class="price-unit">so'm</span></div>
+        <a href="#order" class="price-order-btn">BUYURTMA</a>
+        <div class="price-bar-wrap"><div class="price-bar"></div></div>
+      </div>
+    </div>
+    <span class="sub-label"><span data-uz>4.80 Past reyting</span><span data-ru>Рейтинг 4.80 низкий</span></span>
+    <div class="price-list">
+      <div class="price-row" style="--bar-w:50%">
+        <span class="price-row-name">Komfort</span>
+        <div class="price-row-right"><span class="price-num">150 000</span><span class="price-unit">so'm</span></div>
+        <a href="#order" class="price-order-btn">BUYURTMA</a>
+        <div class="price-bar-wrap"><div class="price-bar"></div></div>
+      </div>
+      <div class="price-row" style="--bar-w:67%">
+        <span class="price-row-name">Komfort+</span>
+        <div class="price-row-right"><span class="price-num">200 000</span><span class="price-unit">so'm</span></div>
+        <a href="#order" class="price-order-btn">BUYURTMA</a>
+        <div class="price-bar-wrap"><div class="price-bar"></div></div>
+      </div>
+      <div class="price-row" style="--bar-w:67%">
+        <span class="price-row-name">Electro</span>
+        <div class="price-row-right"><span class="price-num">200 000</span><span class="price-unit">so'm</span></div>
+        <a href="#order" class="price-order-btn">BUYURTMA</a>
+        <div class="price-bar-wrap"><div class="price-bar"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REYTING 5.00 -->
+  <div class="cat-block">
+    <div class="cat-title"><span class="cat-icon">⭐</span>
+      <span data-uz>Reyting 5.00 qilish</span><span data-ru>Поднять рейтинг до 5.00</span>
+    </div>
+    <div class="price-list">
+      <div class="price-row" style="--bar-w:83%">
+        <span class="price-row-name">Komfort</span>
+        <div class="price-row-right"><span class="price-num">250 000</span><span class="price-unit">so'm</span></div>
+        <a href="#order" class="price-order-btn">BUYURTMA</a>
+        <div class="price-bar-wrap"><div class="price-bar"></div></div>
+      </div>
+      <div class="price-row" style="--bar-w:100%">
+        <span class="price-row-name">Komfort+</span>
+        <div class="price-row-right"><span class="price-num">300 000</span><span class="price-unit">so'm</span></div>
+        <a href="#order" class="price-order-btn">BUYURTMA</a>
+        <div class="price-bar-wrap"><div class="price-bar"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- YIL KO'TARISH -->
+  <div class="cat-block">
+    <div class="cat-title"><span class="cat-icon">📅</span>
+      <span data-uz>Yil Ko'tarish</span><span data-ru>Повышение года</span>
+    </div>
+    <div class="price-list">
+      <div class="price-row" style="--bar-w:50%">
+        <span class="price-row-name">Komfort</span>
+        <div class="price-row-right"><span class="price-num">150 000</span><span class="price-unit">so'm</span></div>
+        <a href="#order" class="price-order-btn">BUYURTMA</a>
+        <div class="price-bar-wrap"><div class="price-bar"></div></div>
+      </div>
+      <div class="price-row" style="--bar-w:67%">
+        <span class="price-row-name">Komfort+</span>
+        <div class="price-row-right"><span class="price-num">200 000</span><span class="price-unit">so'm</span></div>
+        <a href="#order" class="price-order-btn">BUYURTMA</a>
+        <div class="price-bar-wrap"><div class="price-bar"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEXOSMOTR -->
+  <div class="cat-block">
+    <div class="cat-title"><span class="cat-icon">🔧</span>
+      <span data-uz>Texosmotr</span><span data-ru>Техосмотр</span>
+    </div>
+    <div class="price-list">
+      <div class="price-row" style="--bar-w:57%">
+        <span class="price-row-name"><span data-uz>Mexanik mashina</span><span data-ru>Механическое авто</span></span>
+        <div class="price-row-right"><span class="price-num">170 000</span><span class="price-unit">so'm</span></div>
+        <a href="#order" class="price-order-btn">BUYURTMA</a>
+        <div class="price-bar-wrap"><div class="price-bar"></div></div>
+      </div>
+      <div class="price-row" style="--bar-w:63%">
+        <span class="price-row-name"><span data-uz>Electro mashina</span><span data-ru>Электроавто</span></span>
+        <div class="price-row-right"><span class="price-num">190 000</span><span class="price-unit">so'm</span></div>
+        <a href="#order" class="price-order-btn">BUYURTMA</a>
+        <div class="price-bar-wrap"><div class="price-bar"></div></div>
+      </div>
+      <div class="price-row" style="--bar-w:67%">
+        <span class="price-row-name"><span data-uz>Firma mashina</span><span data-ru>Корпоративное авто</span></span>
+        <div class="price-row-right"><span class="price-num">200 000</span><span class="price-unit">so'm</span></div>
+        <a href="#order" class="price-order-btn">BUYURTMA</a>
+        <div class="price-bar-wrap"><div class="price-bar"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LITSENZIYA -->
+  <div class="cat-block">
+    <div class="cat-title"><span class="cat-icon">📋</span>
+      <span data-uz>Litsenziya</span><span data-ru>Лицензия</span>
+    </div>
+    <div class="price-list">
+      <div class="price-row" style="--bar-w:100%">
+        <span class="price-row-name"><span data-uz>Litsenziya rasmiylashtirish</span><span data-ru>Оформление лицензии</span></span>
+        <div class="price-row-right"><span class="price-num">412 000</span><span class="price-unit">so'm</span></div>
+        <a href="#order" class="price-order-btn">BUYURTMA</a>
+        <div class="price-bar-wrap"><div class="price-bar"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAZ AKT -->
+  <div class="cat-block">
+    <div class="cat-title"><span class="cat-icon">⛽</span>
+      <span data-uz>Gaz Akt</span><span data-ru>Газовый Акт</span>
+    </div>
+    <div class="price-list">
+      <div class="price-row" style="--bar-w:33%">
+        <span class="price-row-name"><span data-uz>1 yillik</span><span data-ru>1 год</span></span>
+        <div class="price-row-right"><span class="price-num">100 000</span><span class="price-unit">so'm</span></div>
+        <a href="#order" class="price-order-btn">BUYURTMA</a>
+        <div class="price-bar-wrap"><div class="price-bar"></div></div>
+      </div>
+      <div class="price-row" style="--bar-w:57%">
+        <span class="price-row-name"><span data-uz>2 yillik</span><span data-ru>2 года</span></span>
+        <div class="price-row-right"><span class="price-num">170 000</span><span class="price-unit">so'm</span></div>
+        <a href="#order" class="price-order-btn">BUYURTMA</a>
+        <div class="price-bar-wrap"><div class="price-bar"></div></div>
+      </div>
+      <div class="price-row" style="--bar-w:83%">
+        <span class="price-row-name"><span data-uz>3 yillik</span><span data-ru>3 года</span></span>
+        <div class="price-row-right"><span class="price-num">250 000</span><span class="price-unit">so'm</span></div>
+        <a href="#order" class="price-order-btn">BUYURTMA</a>
+        <div class="price-bar-wrap"><div class="price-bar"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROPAN AKT -->
+  <div class="cat-block">
+    <div class="cat-title"><span class="cat-icon">🔵</span>
+      <span data-uz>Propan Akt</span><span data-ru>Пропановый Акт</span>
+    </div>
+    <div class="price-list">
+      <div class="price-row" style="--bar-w:37%">
+        <span class="price-row-name"><span data-uz>1 yillik</span><span data-ru>1 год</span></span>
+        <div class="price-row-right"><span class="price-num">110 000</span><span class="price-unit">so'm</span></div>
+        <a href="#order" class="price-order-btn">BUYURTMA</a>
+        <div class="price-bar-wrap"><div class="price-bar"></div></div>
+      </div>
+      <div class="price-row" style="--bar-w:60%">
+        <span class="price-row-name"><span data-uz>2 yillik</span><span data-ru>2 года</span></span>
+        <div class="price-row-right"><span class="price-num">180 000</span><span class="price-unit">so'm</span></div>
+        <a href="#order" class="price-order-btn">BUYURTMA</a>
+        <div class="price-bar-wrap"><div class="price-bar"></div></div>
+      </div>
+      <div class="price-row" style="--bar-w:87%">
+        <span class="price-row-name"><span data-uz>3 yillik</span><span data-ru>3 года</span></span>
+        <div class="price-row-right"><span class="price-num">260 000</span><span class="price-unit">so'm</span></div>
+        <a href="#order" class="price-order-btn">BUYURTMA</a>
+        <div class="price-bar-wrap"><div class="price-bar"></div></div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+
+<!-- SHOWCASE/TESTIMONIALS -->
+<section class="showcase">
+  <div class="section-label">
+    <span data-uz>Bizning Xizmatlar</span>
+    <span data-ru>Наши Услуги</span>
+  </div>
+  <div class="showcase-grid">
+    <div class="showcase-card">
+      <div class="showcase-img">🔓</div>
+      <div class="showcase-content">
+        <div class="showcase-title"><span data-uz>Blok Ochish</span><span data-ru>Разблокировка</span></div>
+        <div class="showcase-desc"><span data-uz>Yandex Pro blokirovkasini oching. Tez va xavfsiz xizmat.</span><span data-ru>Разблокируйте Яндекс Про быстро и безопасно.</span></div>
+      </div>
+    </div>
+    <div class="showcase-card">
+      <div class="showcase-img">⭐</div>
+      <div class="showcase-content">
+        <div class="showcase-title"><span data-uz>Reyting Oshirish</span><span data-ru">Повышение Рейтинга</span></div>
+        <div class="showcase-desc"><span data-uz>5.00 reyting qoling. Ko'proq buyurtma, ko'proq daromad.</span><span data-ru">5.00 рейтинг — больше заказов, больше доход.</span></div>
+      </div>
+    </div>
+    <div class="showcase-card">
+      <div class="showcase-img">📅</div>
+      <div class="showcase-content">
+        <div class="showcase-title"><span data-uz>Yil Ko'tarish</span><span data-ru">Годы Водительства</span></div>
+        <div class="showcase-desc"><span data-uz>Tajriba yillarini oshiring. Yanada ko'proq ish qabul qiling.</span><span data-ru">Увеличьте стаж и репутацию водителя.</span></div>
+      </div>
+    </div>
+    <div class="showcase-card">
+      <div class="showcase-img">🔧</div>
+      <div class="showcase-content">
+        <div class="showcase-title"><span data-uz>Texosmotr</span><span data-ru">Техническое Обслуживание</span></div>
+        <div class="showcase-desc"><span data-uz>Texnik ko'rikdan o'ting. To'liq rasmiylashtirish.</span><span data-ru">ТО документы оформлены быстро и законно.</span></div>
+      </div>
+    </div>
+    <div class="showcase-card">
+      <div class="showcase-img">📋</div>
+      <div class="showcase-content">
+        <div class="showcase-title"><span data-uz>Litsenziya</span><span data-ru">Лицензия</span></div>
+        <div class="showcase-desc"><span data-uz>Rasmiy litsenziya oling. Hamma rasm bilan.</span><span data-ru">Официальная лицензия с полным оформлением.</span></div>
+      </div>
+    </div>
+    <div class="showcase-card">
+      <div class="showcase-img">⛽</div>
+      <div class="showcase-content">
+        <div class="showcase-title"><span data-uz>Gaz va Propan Aktlar</span><span data-ru">Газ и Пропан Акты</span></div>
+        <div class="showcase-desc"><span data-uz>Barcha akts va sertifikatlar. 1 dan 3 yillik.</span><span data-ru">Все документы на 1, 2 или 3 года.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid" style="margin-top:80px;">
+    <div class="stat-item">
+      <div class="stat-num">1000+</div>
+      <div class="stat-label"><span data-uz>Foydalanuvchi</span><span data-ru>Клиентов</span></div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">99%</div>
+      <div class="stat-label"><span data-uz>Muvaffaqiyat</span><span data-ru>Успеха</span></div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">24h</div>
+      <div class="stat-label"><span data-uz>Tez Xizmat</span><span data-ru">Быстрая Услуга</span></div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100%</div>
+      <div class="stat-label"><span data-uz>Kafolat</span><span data-ru>Гарантия</span></div>
+    </div>
+  </div>
+</section>
+<section class="section">
+  <div class="section-label">
+    <span data-uz>Qanday Ishlaydi</span>
+    <span data-ru>Как Работает</span>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-title"><span data-uz>Buyurtma bering</span><span data-ru>Оставьте заявку</span></div>
+        <div class="step-desc"><span data-uz>Formani to'ldiring yoki Telegram orqali yozing</span><span data-ru>Заполните форму или напишите в Telegram</span></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="step-title"><span data-uz>To'lov qiling</span><span data-ru>Оплатите</span></div>
+        <div class="step-desc"><span data-uz>Click, Payme yoki naqd pul orqali</span><span data-ru>Через Click, Payme или наличными</span></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="step-title"><span data-uz>Xizmat bajariladi</span><span data-ru>Услуга выполняется</span></div>
+        <div class="step-desc"><span data-uz>1–24 soat ichida natija tayyor</span><span data-ru>Результат готов за 1–24 часа</span></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="step-title"><span data-uz>Kafolat beramiz</span><span data-ru>Гарантия</span></div>
+        <div class="step-desc"><span data-uz>Natija bo'lmasa — to'liq qaytarib beramiz</span><span data-ru>Нет результата — полный возврат</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ORDER FORM -->
+<section class="section" id="order" style="padding-top:60px;padding-bottom:60px;">
+  <div class="section-label">
+    <span data-uz>Buyurtma</span>
+    <span data-ru>Заказ</span>
+  </div>
+  <div class="form-section">
+    <h2 class="form-title">
+      <span data-uz>BUYURTMA<br><span>BERING</span></span>
+      <span data-ru>ОСТАВИТЬ<br><span>ЗАЯВКУ</span></span>
+    </h2>
+    <p class="form-subtitle">
+      <span data-uz>Biz tez orada bog'lanamiz • Telegram: @zachemuya</span>
+      <span data-ru>Свяжемся быстро • Telegram: @zachemuya</span>
+    </p>
+
+    <!-- Telegram config block (admin sees this in page source) -->
+    <div class="tg-config" id="tg-config-note">
+      ⚙️ <b>Admin sozlamasi:</b> Bot token va Chat ID ni quyida kiriting:<br>
+      <code id="cfg-status">Sozlanmagan — quyidagi &lt;script&gt; ichida BOT_TOKEN va CHAT_ID ni o'zgartiring</code>
+    </div>
+
+    <div class="form-grid">
+      <div class="field">
+        <label><span data-uz>Ismingiz</span><span data-ru>Ваше имя</span></label>
+        <input type="text" id="f-name" placeholder="Ali Valiyev">
+      </div>
+      <div class="field">
+        <label><span data-uz>Telefon</span><span data-ru>Телефон</span></label>
+        <input type="tel" id="f-phone" placeholder="+998 90 123 45 67">
+      </div>
+      <div class="field field-full">
+        <label><span data-uz>Xizmat turi</span><span data-ru>Тип услуги</span></label>
+        <select id="f-service">
+          <option value="">— Tanlang / Выберите</option>
+          <optgroup label="🔓 Blok ochish / Разблокировка">
+            <option value="Blok ochish — Komfort (4.80 Baland) — 100 000">Komfort — 4.80 Baland — 100 000 so'm</option>
+            <option value="Blok ochish — Komfort+ (4.80 Baland) — 150 000">Komfort+ — 4.80 Baland — 150 000 so'm</option>
+            <option value="Blok ochish — Electro (4.80 Baland) — 150 000">Electro — 4.80 Baland — 150 000 so'm</option>
+            <option value="Blok ochish — Komfort (4.80 Past) — 150 000">Komfort — 4.80 Past — 150 000 so'm</option>
+            <option value="Blok ochish — Komfort+ (4.80 Past) — 200 000">Komfort+ — 4.80 Past — 200 000 so'm</option>
+            <option value="Blok ochish — Electro (4.80 Past) — 200 000">Electro — 4.80 Past — 200 000 so'm</option>
+          </optgroup>
+          <optgroup label="⭐ Reyting 5.00">
+            <option value="Reyting 5.00 — Komfort — 250 000">Reyting 5.00 — Komfort — 250 000 so'm</option>
+            <option value="Reyting 5.00 — Komfort+ — 300 000">Reyting 5.00 — Komfort+ — 300 000 so'm</option>
+          </optgroup>
+          <optgroup label="📅 Yil ko'tarish">
+            <option value="Yil ko'tarish — Komfort — 150 000">Komfort — 150 000 so'm</option>
+            <option value="Yil ko'tarish — Komfort+ — 200 000">Komfort+ — 200 000 so'm</option>
+          </optgroup>
+          <optgroup label="🔧 Texosmotr">
+            <option value="Texosmotr — Mexanik — 170 000">Mexanik mashina — 170 000 so'm</option>
+            <option value="Texosmotr — Electro — 190 000">Electro mashina — 190 000 so'm</option>
+            <option value="Texosmotr — Firma — 200 000">Firma mashina — 200 000 so'm</option>
+          </optgroup>
+          <optgroup label="📋 Litsenziya">
+            <option value="Litsenziya — 412 000">Litsenziya — 412 000 so'm</option>
+          </optgroup>
+          <optgroup label="⛽ Gaz Akt">
+            <option value="Gaz Akt — 1 yillik — 100 000">1 yillik — 100 000 so'm</option>
+            <option value="Gaz Akt — 2 yillik — 170 000">2 yillik — 170 000 so'm</option>
+            <option value="Gaz Akt — 3 yillik — 250 000">3 yillik — 250 000 so'm</option>
+          </optgroup>
+          <optgroup label="🔵 Propan Akt">
+            <option value="Propan Akt — 1 yillik — 110 000">1 yillik — 110 000 so'm</option>
+            <option value="Propan Akt — 2 yillik — 180 000">2 yillik — 180 000 so'm</option>
+            <option value="Propan Akt — 3 yillik — 260 000">3 yillik — 260 000 so'm</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="field field-full">
+        <label><span data-uz>Izoh (ixtiyoriy)</span><span data-ru>Комментарий (необязательно)</span></label>
+        <textarea id="f-note" placeholder="..."></textarea>
+      </div>
+    </div>
+
+    <div class="form-submit">
+      <button class="btn-primary" onclick="submitForm()">
+        <span data-uz>Yuborish →</span>
+        <span data-ru>Отправить →</span>
+      </button>
+      <span class="form-note">
+        <span data-uz>Yoki to'g'ridan Telegram: </span>
+        <span data-ru>Или напрямую в Telegram: </span>
+        <a href="https://t.me/zachemuya" target="_blank" style="color:var(--yellow)">@zachemuya</a>
+      </span>
+    </div>
+    <div class="success-msg" id="success-msg">
+      <span data-uz>✅ Buyurtmangiz qabul qilindi! Tez orada @zachemuya orqali bog'lanamiz.</span>
+      <span data-ru>✅ Заявка принята! Свяжемся через @zachemuya.</span>
+    </div>
+    <div id="error-msg" style="display:none;background:rgba(255,50,50,.08);border:1px solid #c00;color:#f88;font-family:'Unbounded',sans-serif;font-size:12px;padding:14px 20px;margin-top:16px;">
+      <span data-uz>⚠️ Xabar yuborishda xatolik. Iltimos, to'g'ridan Telegram orqali murojaat qiling: @zachemuya</span>
+      <span data-ru>⚠️ Ошибка отправки. Напишите напрямую в Telegram: @zachemuya</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">Zoxa Shop</div>
+  <div class="footer-links">
+    <a href="#services"><span data-uz>Narxlar</span><span data-ru>Цены</span></a>
+    <a href="#order"><span data-uz>Buyurtma</span><span data-ru>Заказ</span></a>
+    <a href="https://t.me/zachemuya" target="_blank">Telegram</a>
+  </div>
+  <div class="footer-copy">© 2024 Zoxa Shop. <span data-uz>Barcha huquqlar himoyalangan.</span><span data-ru>Все права защищены.</span></div>
+</footer>
+
+</div><!-- /page-wrap -->
+
+<script>
+// ============================================================
+// TELEGRAM BOT SOZLAMASI
+// 1. @BotFather dan bot yarating va token oling
+// 2. Botga bitta xabar yuboring, keyin:
+//    https://api.telegram.org/bot<TOKEN>/getUpdates — chat_id ni oling
+// 3. Quyidagi qiymatlarni o'zgartiring:
+// ============================================================
+const BOT_TOKEN = '8743947590:AAHTOorlKarFwfQwp2mGWObEXo08GT98hVA';   // <-- shu yerga token
+const CHAT_ID   = '8573828290';     // <-- shu yerga chat id
+
+function setLang(lang) {
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  document.querySelectorAll('[data-uz]').forEach(el=>el.style.display=lang==='uz'?'':'none');
+  document.querySelectorAll('[data-ru]').forEach(el=>el.style.display=lang==='ru'?'':'none');
+}
+
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobile-menu');
+  menu.classList.toggle('open');
+}
+
+function closeMobileMenu() {
+  const menu = document.getElementById('mobile-menu');
+  menu.classList.remove('open');
+}
+
+async function submitForm() {
+  const name    = document.getElementById('f-name').value.trim();
+  const phone   = document.getElementById('f-phone').value.trim();
+  const service = document.getElementById('f-service').value;
+  const note    = document.getElementById('f-note').value.trim();
+
+  if (!name || !phone || !service) {
+    alert('Iltimos, ism, telefon va xizmatni kiriting!');
+    return;
+  }
+
+  const btn = document.querySelector('.form-submit .btn-primary');
+  btn.textContent = '⏳ Yuborilmoqda...';
+  btn.style.opacity = '.7';
+
+  const msg = `🆕 Yangi buyurtma — Zoxa Shop\n\n👤 Ism: ${name}\n📞 Telefon: ${phone}\n🛠 Xizmat: ${service}${note ? '\n📝 Izoh: '+note : ''}\n\n⏰ ${new Date().toLocaleString('uz-UZ')}`;
+
+  let sent = false;
+  if (BOT_TOKEN !== 'YOUR_BOT_TOKEN_HERE' && CHAT_ID !== 'YOUR_CHAT_ID_HERE') {
+    try {
+      const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({ chat_id:CHAT_ID, text:msg, parse_mode:'HTML' })
+      });
+      const data = await res.json();
+      sent = data.ok;
+    } catch(e){ sent=false; }
+  }
+
+  btn.textContent = '✓ Yuborildi';
+  btn.style.opacity = '1';
+
+  if (sent || BOT_TOKEN === 'YOUR_BOT_TOKEN_HERE') {
+    document.getElementById('success-msg').style.display='block';
+    document.getElementById('error-msg').style.display='none';
+    document.getElementById('f-name').value='';
+    document.getElementById('f-phone').value='';
+    document.getElementById('f-service').value='';
+    document.getElementById('f-note').value='';
+    document.getElementById('success-msg').scrollIntoView({behavior:'smooth',block:'center'});
+  } else {
+    document.getElementById('error-msg').style.display='block';
+    document.getElementById('success-msg').style.display='none';
+  }
+
+  setTimeout(()=>{ btn.textContent='Yuborish →'; }, 3000);
+}
+
+setLang('uz');
+
+// ===================== PRICE ROW SCROLL REVEAL =====================
+const priceRows = document.querySelectorAll('.price-row');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry, _) => {
+    if (entry.isIntersecting) {
+      const row = entry.target;
+      const siblings = Array.from(row.closest('.price-list').querySelectorAll('.price-row'));
+      const idx = siblings.indexOf(row);
+      setTimeout(() => row.classList.add('visible'), idx * 80);
+      revealObserver.unobserve(row);
+    }
+  });
+}, { threshold: 0.15 });
+priceRows.forEach(r => revealObserver.observe(r));
+
+// ===================== ANIMATED BG =====================
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles=[], lines=[];
+
+function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+window.addEventListener('resize',resize); resize();
+
+class Particle {
+  constructor(){this.reset();}
+  reset(){
+    this.x=Math.random()*W; this.y=Math.random()*H;
+    this.vx=(Math.random()-.5)*.4; this.vy=(Math.random()-.5)*.4;
+    this.r=Math.random()*1.8+.4;
+    this.alpha=Math.random()*.5+.1;
+    this.color=Math.random()>.5?'255,215,0':'255,255,255';
+  }
+  update(){
+    this.x+=this.vx; this.y+=this.vy;
+    if(this.x<0||this.x>W||this.y<0||this.y>H) this.reset();
+  }
+  draw(){
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${this.color},${this.alpha})`;
+    ctx.fill();
+  }
+}
+
+for(let i=0;i<90;i++) particles.push(new Particle());
+
+// floating diagonal lines
+class Line {
+  constructor(){this.reset();}
+  reset(){
+    this.x=Math.random()*W*1.5-W*.25;
+    this.y=-60;
+    this.len=Math.random()*120+40;
+    this.speed=Math.random()*.3+.1;
+    this.alpha=Math.random()*.12+.03;
+    this.w=Math.random()*1+.3;
+  }
+  update(){ this.y+=this.speed; if(this.y>H+100) this.reset(); }
+  draw(){
+    ctx.beginPath();
+    ctx.moveTo(this.x,this.y);
+    ctx.lineTo(this.x+this.len*.4,this.y+this.len);
+    ctx.strokeStyle=`rgba(255,215,0,${this.alpha})`;
+    ctx.lineWidth=this.w;
+    ctx.stroke();
+  }
+}
+for(let i=0;i<25;i++){ const l=new Line(); l.y=Math.random()*H; lines.push(l); }
+
+// pulsing orbs
+let t=0;
+function drawOrbs(){
+  const orbs=[
+    {x:.15,y:.2,r:220,c:'255,215,0',a:.06},
+    {x:.85,y:.75,r:280,c:'255,215,0',a:.05},
+    {x:.5,y:.5,r:180,c:'255,200,0',a:.03},
+  ];
+  orbs.forEach(o=>{
+    const pulse=Math.sin(t*.012+o.r)*.015;
+    const grad=ctx.createRadialGradient(o.x*W,o.y*H,0,o.x*W,o.y*H,o.r*(1+pulse));
+    grad.addColorStop(0,`rgba(${o.c},${o.a+pulse})`);
+    grad.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=grad;
+    ctx.fillRect(0,0,W,H);
+  });
+}
+
+function animate(){
+  ctx.clearRect(0,0,W,H);
+  drawOrbs();
+  lines.forEach(l=>{l.update();l.draw();});
+  // connect nearby particles
+  for(let i=0;i<particles.length;i++){
+    for(let j=i+1;j<particles.length;j++){
+      const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d<100){
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x,particles[i].y);
+        ctx.lineTo(particles[j].x,particles[j].y);
+        ctx.strokeStyle=`rgba(255,215,0,${.07*(1-d/100)})`;
+        ctx.lineWidth=.4;
+        ctx.stroke();
+      }
+    }
+  }
+  particles.forEach(p=>{p.update();p.draw();});
+  t++;
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>
